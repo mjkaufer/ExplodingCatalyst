@@ -15,7 +15,8 @@ var animationMap = {}
   }
 */
 
-
+var animDoneCount = 0;
+var wordCount = 8;
 
 paper = Snap('#l')
 
@@ -30,7 +31,7 @@ Snap.load('./catalyst.svg', function(frag) {
     // console.log(frag.select(".letter"))
     paper.append(svgElement)
     svgElementClone = svgElement
-    svgElement.attr('fill-opacity', 0)
+    paper.attr('fill-opacity', 0)
 
     var arr = svgElementClone.node.children[0].children;
 
@@ -64,23 +65,23 @@ Snap.load('./catalyst.svg', function(frag) {
     })
 
     
-    setTimeout(function(){
+    // setTimeout(function(){
       
-      var group = paper.select("#allLetters")
-      // console.log(group.getBBox().w)
-      console.log(paper.attr('width'))
-      console.log(group.getBBox())
-      var dx = (paper.attr('width') - group.getBBox().w)/2
-      var dy = (paper.attr('height') - group.getBBox().h)/2
-      console.log(dx, dy)
-      var scaleFactor = Math.min(paper.attr('width') / group.getBBox().w, paper.attr('height') / group.getBBox().h)*.9
-      console.log(scaleFactor)
-      group.transform("T" + dx + "," + dy+"s" + scaleFactor + "," + scaleFactor)  
-      Snap.animate(0, 1, function(val){
-        svgElement.attr({"fill-opacity": val})
-        console.log(val)
-      }, 100)
-    }, 100)
+    //   var group = paper.select("#allLetters")
+    //   // console.log(group.getBBox().w)
+    //   console.log(paper.attr('width'))
+    //   console.log(group.getBBox())
+    //   var dx = (paper.attr('width') - group.getBBox().w)/2
+    //   var dy = (paper.attr('height') - group.getBBox().h)/2
+    //   console.log(dx, dy)
+    //   var scaleFactor = Math.min(paper.attr('width') / group.getBBox().w, paper.attr('height') / group.getBBox().h)*.9
+    //   console.log(scaleFactor)
+    //   group.transform("T" + dx + "," + dy+"s" + scaleFactor + "," + scaleFactor)  
+    //   Snap.animate(0, 1, function(val){
+    //     svgElement.attr({"fill-opacity": val})
+    //     console.log(val)
+    //   }, 100)
+    // }, 100)
     
 
 })
@@ -117,6 +118,7 @@ function implode(letterID, letter) {
     // if (animationMap[letter].implodingQueued)
     //   return
     animationMap[letter].implodingQueued = true
+    var added = false
     $(' .letters g#' + letter).find('path, polygon').velocity({
 
         translateZ: 0,
@@ -126,7 +128,29 @@ function implode(letterID, letter) {
         rotateZ: "0deg",
 
     }, [170, 15], function() {
-    
-      // animationMap[letter].implodingQueued = false
+
+      if (!added && animDoneCount < 8) {
+        
+        console.log("whoo")
+        added = true;
+        animDoneCount++;
+        if (animDoneCount == 8) {
+          console.log("!!")
+          var group = paper.select("#allLetters")
+  // console.log(group.getBBox().w)
+          console.log(paper.attr('width'))
+          console.log(group.getBBox())
+          var dx = (paper.attr('width') - group.getBBox().w)/2
+          var dy = (paper.attr('height') - group.getBBox().h)/2
+          console.log(dx, dy)
+          var scaleFactor = Math.min(paper.attr('width') / group.getBBox().w, paper.attr('height') / group.getBBox().h)*.9
+          console.log(scaleFactor)
+          group.transform("T" + dx + "," + dy+"s" + scaleFactor + "," + scaleFactor)  
+          Snap.animate(0, 1, function(val){
+            paper.attr({"fill-opacity": val})
+            console.log(val,"-")
+          }, 500)
+        }
+      }
     }); 
 };
