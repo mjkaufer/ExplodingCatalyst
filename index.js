@@ -7,7 +7,13 @@
 //      implode($(this).parents('.logo').attr('id'), $(this).data('letter'));
 // });
 
-
+var animationMap = {}
+/*
+  id: {
+    implodingQueued,
+    explodingQueued
+  }
+*/
 
 
 
@@ -26,11 +32,23 @@ Snap.load('./catalyst.svg', function(frag) {
     svgElementClone = svgElement
     svgElement.attr('fill-opacity', 0)
 
+    var arr = svgElementClone.node.children[0].children;
+
+    console.log(svgElementClone.node.children[0].children)
+
+
 
     // svgE
     // console.log(svgElement.children())
 
     paper.selectAll('#svg8 .l').forEach(function(e) {
+
+        animationMap[e.node.id] = {
+          implodingQueued: false,
+          explodingQueued: false
+        }
+
+
         console.log("WHOO")
         e.hover(function(){
           console.log(e.node.id)
@@ -76,6 +94,9 @@ function explode(letterID, letter) {
     // if (animatingMap[letter])
     //   return
     // animatingMap[letter] = true
+    if (animationMap[letter].explodingQueued)
+      return
+    animationMap[letter].explodingQueued = true
     $(' .letters g#' + letter).find('path,polygon').each(function() {
 
         $(this).velocity({
@@ -84,18 +105,18 @@ function explode(letterID, letter) {
             translateY: random(-200, 180),
             rotateZ: "5deg",
             opacity: 0,
+        }, function() {
+          animationMap[letter].explodingQueued = false
         });
 
     });
 }
 
 
-function implode(letterID, letter, s) {
-  if (s===undefined)
-    s == 170
-    // if (animatingMap[letter])
-    //   return
-    // animatingMap[letter] = true
+function implode(letterID, letter) {
+    if (animationMap[letter].implodingQueued)
+      return
+    animationMap[letter].implodingQueued = true
     $(' .letters g#' + letter).find('path, polygon').velocity({
 
         translateZ: 0,
@@ -104,5 +125,8 @@ function implode(letterID, letter, s) {
         opacity: 1,
         rotateZ: "0deg",
 
-    }, [s, 15]);
+    }, [170, 15], function() {
+    
+      animationMap[letter].implodingQueued = false
+    }); 
 };
