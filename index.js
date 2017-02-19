@@ -114,8 +114,8 @@ function explode(letterID, letter) {
 
 
 function implode(letterID, letter) {
-    if (animationMap[letter].implodingQueued)
-      return
+    // if (animationMap[letter].implodingQueued)
+    //   return
     animationMap[letter].implodingQueued = true
     $(' .letters g#' + letter).find('path, polygon').velocity({
 
@@ -127,6 +127,6 @@ function implode(letterID, letter) {
 
     }, [170, 15], function() {
     
-      animationMap[letter].implodingQueued = false
+      // animationMap[letter].implodingQueued = false
     }); 
 };
